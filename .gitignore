@@ -71,3 +71,11 @@ atlassian-ide-plugin.xml
 com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
+
+gradle/
+gradlew
+gradlew.bat
+library/gradle/
+library/gradlew
+library/gradlew.bat
+

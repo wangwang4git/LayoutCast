@@ -124,6 +124,7 @@ public class LcastServer extends EmbedHttpServer {
 			Log.d("lcast", "lcast dex file received (" + file.length() + " bytes)");
 			return;
 		}
+		// 接受pcast命令，对应杀掉进程
 		if ("/pcast".equalsIgnoreCase(path)) {
 			LayoutCast.restart(false);
 			response.setStatusCode(200);
@@ -133,6 +134,7 @@ public class LcastServer extends EmbedHttpServer {
 			File dir = new File(context.getCacheDir(), "lcast");
 			File dex = new File(dir, "dex.ped");
 			if (dex.length() > 0) {
+				// 接受lcast命令，如果是代码变动，对应杀掉进程
 				if (latestPushFile != null) {
 					File f = new File(dir, "res.ped");
 					latestPushFile.renameTo(f);
@@ -141,6 +143,7 @@ public class LcastServer extends EmbedHttpServer {
 				boolean b = LayoutCast.restart(true);
 				response.setStatusCode(b ? 200 : 500);
 			} else {
+				// 接受lcast命令，如果只是资源变动，重启activity
 				Resources res = ResUtils.getResources(app, latestPushFile);
 				OverrideContext.setGlobalResources(res);
 				response.setStatusCode(200);
@@ -149,12 +152,14 @@ public class LcastServer extends EmbedHttpServer {
 			}
 			return;
 		}
+		// 接受reset命令，重启activity
 		if ("/reset".equalsIgnoreCase(path)) {
 			OverrideContext.setGlobalResources(null);
 			response.setStatusCode(200);
 			response.write("OK".getBytes("utf-8"));
 			return;
 		}
+		// 接受ids.xml命令
 		if ("/ids.xml".equalsIgnoreCase(path)) {
 			String Rn = app.getPackageName() + ".R";
 			Class<?> Rclazz = app.getClassLoader().loadClass(Rn);
@@ -165,6 +170,7 @@ public class LcastServer extends EmbedHttpServer {
 			response.write(str.getBytes("utf-8"));
 			return;
 		}
+		// 接受public.xml命令
 		if ("/public.xml".equalsIgnoreCase(path)) {
 			String Rn = app.getPackageName() + ".R";
 			Class<?> Rclazz = app.getClassLoader().loadClass(Rn);
@@ -237,6 +243,7 @@ public class LcastServer extends EmbedHttpServer {
 			response.write(result.toString().getBytes("utf-8"));
 			return;
 		}
+		
 		if (path.startsWith("/fileraw/")) {
 			ApplicationInfo ai = app.getApplicationInfo();
 			File apkFile = new File(ai.sourceDir);
